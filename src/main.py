@@ -32,6 +32,7 @@ def analyze_demo_data(countries):
     Do a very simple analysis on the demo data:
     - compute average GDP per capita
     - find the country with the highest life expectancy
+    - list countries with GDP per capita above the average
     """
     if not countries:
         print("No data to analyze.")
@@ -62,10 +63,27 @@ def analyze_demo_data(countries):
             max_life = life_value
             max_country = country["country"]
 
+    # --- countries with GDP per capita above average ---
+    above_average_countries = []
+    for country in countries:
+        gdp_value = int(country["gdp_per_capita"])
+        if gdp_value > average_gdp:
+            above_average_countries.append(country["country"])
+
+    # ---- printing results ----
     print("\n=== ANALYSIS RESULTS ===")
     print(f"Average GDP per capita: {average_gdp:,.2f} USD")
     print(f"Highest life expectancy: {max_life} years ({max_country})")
+
+    print("\nCountries with GDP per capita ABOVE the average:")
+    if above_average_countries:
+        for name in above_average_countries:
+            print(f" - {name}")
+    else:
+        print(" (none)")
+
     print("========================\n")
+
 
 def print_countries(countries):
     """
@@ -100,3 +118,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
