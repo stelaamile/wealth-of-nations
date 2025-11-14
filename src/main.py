@@ -67,6 +67,20 @@ def analyze_demo_data(countries):
     print(f"Highest life expectancy: {max_life} years ({max_country})")
     print("========================\n")
 
+def print_countries(countries):
+    """
+    Print a readable summary of all countries in the dataset.
+    """
+    print("\nCountries in the dataset:")
+    print(f"(Total: {len(countries)} countries)\n")
+
+    for row in countries:
+        country = row["country"]
+        year = row["year"]
+        gdp = row["gdp_per_capita"]
+        life = row["life_expectancy"]
+        print(f" - {country} ({year}) | GDP per capita: {gdp} | Life expectancy: {life}")
+
 
 def main():
     print("Welcome to 'The Wealth of Nations' project!")
@@ -74,17 +88,14 @@ def main():
     filepath = "data/demo_countries.csv"
     data = load_demo_data(filepath)
 
-    print("Demo data loaded:")
-    print("\nCountries in the dataset:")
-    for row in data:
-        country = row["country"]
-        year = row["year"]
-        gdp = row["gdp_per_capita"]
-        life = row["life_expectancy"]
-        print(f" - {country} ({year}) | GDP per capita: {gdp} | Life expectancy: {life}")
+    if not data:
+        print("No data loaded. Exiting program.")
+        return
 
-    # Call our analysis function
-    analyze_demo_data(data)
+    print("Demo data loaded successfully.")
+    print_countries(data)        # new helper function
+    analyze_demo_data(data)      # analysis as before
+
 
 
 if __name__ == "__main__":
