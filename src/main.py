@@ -27,6 +27,46 @@ def load_demo_data(filepath):
     return countries
 
 
+def analyze_demo_data(countries):
+    """
+    Do a very simple analysis on the demo data:
+    - compute average GDP per capita
+    - find the country with the highest life expectancy
+    """
+    if not countries:
+        print("No data to analyze.")
+        return
+
+    # --- average GDP per capita ---
+    total_gdp = 0
+    count = 0
+
+    for country in countries:
+        # values from CSV are strings -> convert to int
+        gdp_str = country["gdp_per_capita"]
+        gdp_value = int(gdp_str)
+        total_gdp += gdp_value
+        count += 1
+
+    average_gdp = total_gdp / count
+
+    # --- country with max life expectancy ---
+    max_life = None
+    max_country = None
+
+    for country in countries:
+        life_str = country["life_expectancy"]
+        life_value = float(life_str)
+
+        if (max_life is None) or (life_value > max_life):
+            max_life = life_value
+            max_country = country["country"]
+
+    print("\n--- Simple analysis on demo data ---")
+    print(f"Average GDP per capita (all countries): {average_gdp:.2f}")
+    print(f"Highest life expectancy: {max_life} years in {max_country}")
+
+
 def main():
     print("Welcome to 'The Wealth of Nations' project!")
 
@@ -35,6 +75,9 @@ def main():
 
     print("Demo data loaded:")
     print(data)
+
+    # Call our analysis function
+    analyze_demo_data(data)
 
 
 if __name__ == "__main__":
