@@ -62,9 +62,10 @@ def analyze_demo_data(countries):
             max_life = life_value
             max_country = country["country"]
 
-    print("\n--- Simple analysis on demo data ---")
-    print(f"Average GDP per capita (all countries): {average_gdp:.2f}")
-    print(f"Highest life expectancy: {max_life} years in {max_country}")
+    print("\n=== ANALYSIS RESULTS ===")
+    print(f"Average GDP per capita: {average_gdp:,.2f} USD")
+    print(f"Highest life expectancy: {max_life} years ({max_country})")
+    print("========================\n")
 
 
 def main():
@@ -74,7 +75,13 @@ def main():
     data = load_demo_data(filepath)
 
     print("Demo data loaded:")
-    print(data)
+    print("\nCountries in the dataset:")
+    for row in data:
+        country = row["country"]
+        year = row["year"]
+        gdp = row["gdp_per_capita"]
+        life = row["life_expectancy"]
+        print(f" - {country} ({year}) | GDP per capita: {gdp} | Life expectancy: {life}")
 
     # Call our analysis function
     analyze_demo_data(data)
