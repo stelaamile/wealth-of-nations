@@ -4,9 +4,15 @@ import matplotlib.pyplot as plt
 
 def load_demo_data(filepath):
     """
-    Load a small CSV file using basic Python.
-    Returns a list of dictionaries.
+    Load a small CSV file using basic Python methods (no pandas).
+
+    Args:
+        filepath (str): Path to the CSV file.
+
+    Returns:
+        list[dict]: A list of dictionaries, one per country.
     """
+
     countries = []  # store all our rows as dictionaries
 
     try:
@@ -33,11 +39,17 @@ def load_demo_data(filepath):
 
 def analyze_demo_data(countries):
     """
-    Do a very simple analysis on the demo data:
-    - compute average GDP per capita
-    - find the country with the highest life expectancy
-    - list countries with GDP per capita above the average
+    Perform simple analysis on the demo dataset using pure Python.
+
+    Computes:
+    - average GDP per capita
+    - the country with the highest life expectancy
+    - list of countries with above-average GDP per capita
+
+    Args:
+        countries (list[dict]): Dataset loaded by load_demo_data().
     """
+
     if not countries:
         print("No data to analyze.")
         return
@@ -105,9 +117,13 @@ def print_countries(countries):
 
 def show_worldbank_preview():
     """
-    Load the World Bank GDP per capita CSV with pandas
-    and print a small preview and basic info.
+    Load the World Bank GDP per capita dataset using pandas
+    and print a clean preview, including:
+    - first five rows
+    - number of rows
+    - column names
     """
+
     filepath = "data/worldbank_gdp_per_capita.csv"
     df = load_gdp_per_capita_from_csv(filepath)
 
@@ -124,13 +140,18 @@ def show_worldbank_preview():
 
 def analyze_worldbank_data(df):
     """
-    Do a simple analysis on the World Bank GDP per capita data using
-    pandas and numpy.
+    Perform pandas and NumPy-based analysis on the World Bank dataset.
 
-    - compute global mean and standard deviation of GDP per capita
-    - find the most recent year in the dataset
-    - list the top 5 regions by GDP per capita in that most recent year
+    Computes:
+    - global mean GDP per capita
+    - global standard deviation
+    - most recent year in the dataset
+    - top 5 regions by GDP per capita for that year
+
+    Args:
+        df (pd.DataFrame): Cleaned DataFrame returned by the loader.
     """
+
     # Drop missing values just in case
     df = df.dropna(subset=["gdp_per_capita"])
 
@@ -157,8 +178,12 @@ def analyze_worldbank_data(df):
 def plot_global_gdp_trend(df):
     """
     Plot the global average GDP per capita over time
-    and save it as an image in the data/ folder.
+    and save the figure to the 'data/' directory.
+
+    Args:
+        df (pd.DataFrame): Cleaned GDP per capita DataFrame.
     """
+
     # Compute global average per year
     yearly_avg = df.groupby("year")["gdp_per_capita"].mean()
 
@@ -175,6 +200,15 @@ def plot_global_gdp_trend(df):
     print(f"\nSaved plot to {output_path}")
 
 def main():
+    """
+    Main entry point for the Wealth of Nations project.
+
+    Runs:
+    - demo dataset loading and analysis (pure Python)
+    - World Bank dataset loading, cleaning, analysis (pandas + NumPy)
+    - GDP trend visualisation (matplotlib)
+    """
+
     print("Welcome to 'The Wealth of Nations' project!")
 
     filepath = "data/demo_countries.csv"
