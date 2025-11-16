@@ -1,4 +1,5 @@
 from src.load_wb_data import load_gdp_per_capita_from_csv
+import numpy as np
 
 def load_demo_data(filepath):
     """
@@ -113,6 +114,42 @@ def show_worldbank_preview():
     print(df.head())
     print(f"\nNumber of rows: {len(df)}")
     print(f"Columns: {list(df.columns)}")
+
+    # New: run a simple pandas + numpy analysis
+    analyze_worldbank_data(df)
+
+
+def analyze_worldbank_data(df):
+    """
+    Do a simple analysis on the World Bank GDP per capita data using
+    pandas and numpy.
+
+    - compute global mean and standard deviation of GDP per capita
+    - find the most recent year in the dataset
+    - list the top 5 regions by GDP per capita in that most recent year
+    """
+    # Drop missing values just in case
+    df = df.dropna(subset=["gdp_per_capita"])
+
+    # Global stats with numpy
+    gdp_values = df["gdp_per_capita"].values
+    global_mean = np.mean(gdp_values)
+    global_std = np.std(gdp_values)
+
+    print("\n=== WORLD BANK GDP: GLOBAL STATS ===")
+    print(f"Global mean GDP per capita: {global_mean:,.2f} USD")
+    print(f"Global std dev GDP per capita: {global_std:,.2f} USD")
+
+    # Most recent year in the dataset
+    latest_year = df["year"].max()
+    latest_df = df[df["year"] == latest_year]
+
+    # Top 5 regions in that year
+    top5 = latest_df.nlargest(5, "gdp_per_capita")[["region_name", "gdp_per_capita"]]
+
+    print(f"\nTop 5 regions in {latest_year} by GDP per capita:")
+    for _, row in top5.iterrows():
+        print(f" - {row['region_name']}: {row['gdp_per_capita']:,.2f} USD")
 
 def main():
     print("Welcome to 'The Wealth of Nations' project!")
