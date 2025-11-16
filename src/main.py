@@ -1,5 +1,6 @@
 from src.load_wb_data import load_gdp_per_capita_from_csv
 import numpy as np
+import matplotlib.pyplot as plt
 
 def load_demo_data(filepath):
     """
@@ -118,6 +119,8 @@ def show_worldbank_preview():
     # New: run a simple pandas + numpy analysis
     analyze_worldbank_data(df)
 
+    # New: create and save a plot
+    plot_global_gdp_trend(df)
 
 def analyze_worldbank_data(df):
     """
@@ -150,6 +153,26 @@ def analyze_worldbank_data(df):
     print(f"\nTop 5 regions in {latest_year} by GDP per capita:")
     for _, row in top5.iterrows():
         print(f" - {row['region_name']}: {row['gdp_per_capita']:,.2f} USD")
+
+def plot_global_gdp_trend(df):
+    """
+    Plot the global average GDP per capita over time
+    and save it as an image in the data/ folder.
+    """
+    # Compute global average per year
+    yearly_avg = df.groupby("year")["gdp_per_capita"].mean()
+
+    plt.figure(figsize=(8, 4))
+    plt.plot(yearly_avg.index, yearly_avg.values)
+    plt.title("Global Average GDP per Capita Over Time")
+    plt.xlabel("Year")
+    plt.ylabel("GDP per capita (USD)")
+    plt.tight_layout()
+
+    # Save the figure to a file
+    output_path = "data/global_gdp_trend.png"
+    plt.savefig(output_path)
+    print(f"\nSaved plot to {output_path}")
 
 def main():
     print("Welcome to 'The Wealth of Nations' project!")
