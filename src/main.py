@@ -1,7 +1,9 @@
+from src.load_wb_data import load_gdp_per_capita_from_csv
+
 def load_demo_data(filepath):
     """
     Load a small CSV file using basic Python.
-    Returns a list of dictionaries, one per country.
+    Returns a list of dictionaries.
     """
     countries = []  # store all our rows as dictionaries
 
@@ -99,6 +101,18 @@ def print_countries(countries):
         life = row["life_expectancy"]
         print(f" - {country} ({year}) | GDP per capita: {gdp} | Life expectancy: {life}")
 
+def show_worldbank_preview():
+    """
+    Load the World Bank GDP per capita CSV with pandas
+    and print a small preview and basic info.
+    """
+    filepath = "data/worldbank_gdp_per_capita.csv"
+    df = load_gdp_per_capita_from_csv(filepath)
+
+    print("\n=== WORLD BANK GDP PER CAPITA: PREVIEW ===")
+    print(df.head())
+    print(f"\nNumber of rows: {len(df)}")
+    print(f"Columns: {list(df.columns)}")
 
 def main():
     print("Welcome to 'The Wealth of Nations' project!")
@@ -111,8 +125,11 @@ def main():
         return
 
     print("Demo data loaded successfully.")
-    print_countries(data)        # new helper function
-    analyze_demo_data(data)      # analysis as before
+    print_countries(data)
+    analyze_demo_data(data)
+
+    # New: also show the World Bank dataset
+    show_worldbank_preview()
 
 
 
