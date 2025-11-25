@@ -1,18 +1,33 @@
-# wealth-of-nations
-This project analyzes GDP per capita for a selected set of countries using data from the World Bank. It demonstrates key skills from the course, including a clean project structure, modular code, data loading, and reproducible environments using virtual environments.
+This project analyzes GDP per capita for a selected set of countries using data from the World Bank.
+It demonstrates key skills from the course:
 
-The project loads a local World Bank dataset (worldbank_gdp_per_capita.csv), cleans it, and computes summary statistics for countries listed in demo_countries.csv.
+clean project structure
+
+modular code
+
+data loading from external sources
+
+data cleaning and manipulation with pandas
+
+scientific computing with NumPy
+
+visualisation with matplotlib
+
+reproducible environments with virtual environments
+
+The project loads a local World Bank dataset (worldbank_gdp_per_capita.csv), cleans it, and computes summary statistics. It also includes a small demo dataset (demo_countries.csv) loaded using basic Python to illustrate manual CSV handling.
 
 Project Structure
-
 project_root/
 ├── data/
-│ ├── demo_countries.csv
-│ └── worldbank_gdp_per_capita.csv
+│   ├── demo_countries.csv
+│   ├── worldbank_gdp_per_capita.csv
+│   └── global_gdp_trend.png        # generated plot
 │
 ├── src/
-│ ├── load_wb_data.py
-│ └── analyze_gdp.py
+│   ├── __init__.py
+│   ├── load_wb_data.py
+│   └── main.py
 │
 ├── venv/
 │
@@ -24,56 +39,75 @@ Data Sources
 
 World Bank — GDP per capita (current US$)
 Local file: data/worldbank_gdp_per_capita.csv
-This file includes a metadata header row, which is cleaned automatically by load_wb_data.py.
+The file includes metadata columns, which are cleaned automatically by load_wb_data.py.
 
-Demo countries
+Demo countries dataset
 Local file: data/demo_countries.csv
-Contains ISO-3 country codes used to filter the GDP dataset.
+Used to demonstrate basic Python CSV parsing (no pandas).
 
 Installation
 
-Clone the repository
+Clone the repository:
 
-git clone https://github.com/
-<your-username>/<your-repo>.git
+git clone https://github.com/<your-username>/<your-repo>.git
 cd <your-repo>
 
-Create and activate the virtual environment
+
+Create and activate the virtual environment:
 
 python3 -m venv venv
 source venv/bin/activate
 
-Install dependencies
+
+Install dependencies:
 
 pip install -r requirements.txt
 
 Running the Project
 
-Run the GDP analysis script:
+Run the main script:
 
-python -m src.analyze_gdp
+python -m src.main
 
-This will load and clean the World Bank GDP CSV, filter the data to the demo countries, compute summary statistics, and print the results to the terminal.
+
+This will:
+
+load and display the demo dataset
+
+compute simple statistics using pure Python
+
+load and clean the World Bank GDP dataset using pandas
+
+compute global numerical statistics using NumPy
+
+display the top 5 richest regions in the latest year
+
+generate a plot of the global average GDP per capita over time and save it as:
+
+data/global_gdp_trend.png
 
 Dependencies
 
 Listed in requirements.txt:
 
 pandas
+numpy
+matplotlib
 
 Git Usage
 
 This project follows recommended Git practices:
 
-.gitignore excludes unnecessary files such as venv/, pycache/ and .DS_Store
+.gitignore excludes unnecessary files such as venv/, __pycache__/, and .DS_Store
 
-commits are frequent, small, and have clear messages
+commits are small, frequent, and have descriptive messages
 
-the README documents project purpose, installation, and usage
+README provides clear installation and usage instructions
 
 Example commit messages:
 
 feat: add World Bank GDP loader
-feat: implement GDP analysis script
-fix: clean metadata row from CSV
-docs: update README with run instructions
+feat: integrate GDP statistics and analysis
+feat: add global GDP trend plot using matplotlib
+fix: clean metadata row from World Bank dataset
+docs: update README with project usage and plot description
