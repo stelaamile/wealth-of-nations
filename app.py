@@ -14,9 +14,6 @@ from src.analysis import (
 def load_worldbank_data() -> pd.DataFrame:
     """
     Load and cache the World Bank GDP per capita dataset.
-
-    Returns:
-        pd.DataFrame: Cleaned GDP per capita data.
     """
     filepath = "data/worldbank_gdp_per_capita.csv"
     df = load_gdp_per_capita_from_csv(filepath)
@@ -44,11 +41,27 @@ def main():
     # DATA PREVIEW SECTION
     # ----------------------------
     st.subheader("Data preview")
-    st.write("First 5 rows of the cleaned World Bank dataset:")
-    st.dataframe(df.head())
 
-    st.write(f"Number of rows: {len(df)}")
-    st.write(f"Columns: {list(df.columns)}")
+    st.write("Select which group type you want to preview:")
+
+    preview_type = st.selectbox(
+        "Group type:",
+        ["geographic", "income_group", "demographic_group", "other"],
+        index=0,
+    )
+
+    preview_df = (
+        df[df["group_type"] == preview_type]
+        .loc[:, ["region_code", "region_name", "year", "gdp_per_capita", "group_type"]]
+        .reset_index(drop=True)
+    )
+
+    st.dataframe(preview_df.head(50), use_container_width=True)
+
+    st.caption(
+        f"Showing {min(50, len(preview_df)):,} of {len(preview_df):,} rows "
+        f"for group type: **{preview_type}**"
+    )
 
     # ----------------------------
     # GLOBAL OVERVIEW SECTION
@@ -62,12 +75,12 @@ def main():
 
     col1.metric(
         label=f"GDP per capita in {summary['first_year']}",
-        value=f"${summary['first_value']:,.0f}"
+        value=f"${summary['first_value']:,.0f}",
     )
 
     col2.metric(
         label=f"GDP per capita in {summary['last_year']}",
-        value=f"${summary['last_value']:,.0f}"
+        value=f"${summary['last_value']:,.0f}",
     )
 
     col3.metric(
