@@ -40,12 +40,50 @@ def main():
     # Load data (cached)
     df = load_worldbank_data()
 
+    # ----------------------------
+    # DATA PREVIEW SECTION
+    # ----------------------------
     st.subheader("Data preview")
     st.write("First 5 rows of the cleaned World Bank dataset:")
     st.dataframe(df.head())
 
     st.write(f"Number of rows: {len(df)}")
     st.write(f"Columns: {list(df.columns)}")
+
+    # ----------------------------
+    # GLOBAL OVERVIEW SECTION
+    # ----------------------------
+    st.header("🌐 Global Prosperity Overview")
+
+    # Compute summary stats
+    summary = summarize_global_trend(df)
+
+    col1, col2, col3 = st.columns(3)
+
+    col1.metric(
+        label=f"GDP per capita in {summary['first_year']}",
+        value=f"${summary['first_value']:,.0f}"
+    )
+
+    col2.metric(
+        label=f"GDP per capita in {summary['last_year']}",
+        value=f"${summary['last_value']:,.0f}"
+    )
+
+    col3.metric(
+        label="Growth since 1960",
+        value=f"{summary['growth_pct']:.1f}%",
+    )
+
+    # Line plot — global average over time
+    st.subheader("Global Average GDP per Capita Over Time")
+
+    yearly_avg = compute_global_yearly_average(df)
+
+    st.line_chart(
+        yearly_avg,
+        height=350
+    )
 
 
 if __name__ == "__main__":
