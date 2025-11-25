@@ -22,6 +22,7 @@ regex==2025.11.3
 requests==2.32.5
 shelved-cache==0.3.1
 six==1.17.0
+streamlit
 tabulate==0.9.0
 tzdata==2025.2
 tzlocal==5.3.1
