@@ -1,5 +1,5 @@
 import pandas as pd
-
+from src.models import GDPRegion
 
 def load_gdp_per_capita_from_csv(filepath):
     """
@@ -38,3 +38,20 @@ def load_gdp_per_capita_from_csv(filepath):
     df = df.dropna(subset=["gdp_per_capita"])
 
     return df
+
+
+def dataframe_to_objects(df):
+    """
+    Convert the cleaned GDP DataFrame into a list of GDPRegion objects.
+    """
+    regions = []
+    for _, row in df.iterrows():
+        regions.append(
+            GDPRegion(
+                region_code=row["region_code"],
+                region_name=row["region_name"],
+                year=row["year"],
+                gdp_per_capita=row["gdp_per_capita"]
+            )
+        )
+    return regions
