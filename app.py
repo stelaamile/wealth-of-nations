@@ -42,13 +42,13 @@ def main():
     # ----------------------------
     st.subheader("Data preview")
     st.write("Select which group type you want to preview:")
-    
+
     # Mapping from internal labels to pretty labels
     pretty_labels = {
         "geographic": "Geographic",
         "income_group": "Income Group",
         "demographic_group": "Demographic Group",
-        "other": "Other"
+        "other": "Other",
     }
 
     # Reverse mapping for selection
@@ -60,8 +60,8 @@ def main():
         index=0,
     )
 
-    preview_type = inv_map[preview_label]  # convert pretty → internal
-
+    # Convert pretty label back to internal code
+    preview_type = inv_map[preview_label]
 
     # Filter once by selected group_type
     filtered_df = df[df["group_type"] == preview_type]
@@ -76,8 +76,41 @@ def main():
 
     st.caption(
         f"Showing {min(50, len(filtered_df)):,} of {len(filtered_df):,} rows "
-        f"for group type: **{preview_type}**"
+        f"for group type: **{preview_label}**"
     )
+
+    # ----------------------------
+    # FOCUS ON SINGLE REGION / GROUP
+    # ----------------------------
+    st.subheader("Focus on a single region / group")
+
+    if filtered_df.empty:
+        st.info("No data available for this group type.")
+    else:
+        # 👉 ALL regions in this category
+        region_options = sorted(filtered_df["region_name"].unique())
+
+        selected_region = st.selectbox(
+            "Select a region / group to analyze:",
+            region_options,
+        )
+
+        # Show all rows for this region (no .head(50) here!)
+        region_detail = (
+            filtered_df[filtered_df["region_name"] == selected_region]
+            .loc[:, ["year", "gdp_per_capita"]]
+            .sort_values("year")
+            .reset_index(drop=True)
+        )
+
+        st.write(f"GDP per capita over time – **{selected_region}**")
+        st.dataframe(region_detail, use_container_width=True)
+
+        # Optional: region vs world chart synced with selection
+        region_vs_world = compute_region_vs_world(df, selected_region)
+        region_vs_world = region_vs_world.set_index("year")
+        st.subheader(f"{selected_region} vs World – GDP per capita")
+        st.line_chart(region_vs_world, height=350)
 
     # ----------------------------
     # GLOBAL OVERVIEW (ALL DATA)
@@ -111,7 +144,7 @@ def main():
     # ----------------------------
     # OVERVIEW FOR SELECTED GROUP TYPE
     # ----------------------------
-    nice_name = preview_type.replace("_", " ").title()
+    nice_name = preview_label  # already pretty
     st.header(f"📊 Prosperity Overview – {nice_name}")
 
     if filtered_df.empty:
@@ -137,6 +170,7 @@ def main():
 
         yearly_avg_group = compute_global_yearly_average(filtered_df)
         st.line_chart(yearly_avg_group, height=350)
+
 
 if __name__ == "__main__":
     main()
