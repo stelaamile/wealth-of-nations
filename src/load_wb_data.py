@@ -1,5 +1,5 @@
 import pandas as pd
-from src.models import GDPRegion
+
 
 def load_gdp_per_capita_from_csv(filepath):
     """
@@ -10,6 +10,7 @@ def load_gdp_per_capita_from_csv(filepath):
     - region_name
     - year
     - gdp_per_capita
+    - group_type   (geographic / income_group / demographic_group / other)
     """
 
     # 1. Read the CSV file
@@ -37,21 +38,46 @@ def load_gdp_per_capita_from_csv(filepath):
     df["gdp_per_capita"] = pd.to_numeric(df["gdp_per_capita"], errors="coerce")
     df = df.dropna(subset=["gdp_per_capita"])
 
+    # 6. Classify each REF_AREA_LABEL into a group type
+    geographic_regions = {
+        "Africa Eastern and Southern",
+        "Africa Western and Central",
+        "East Asia & Pacific",
+        "East Asia & Pacific (excluding high income)",
+        "Europe & Central Asia",
+        "Latin America & Caribbean",
+        "Middle East & North Africa",
+        "North America",
+        "South Asia",
+        "Sub-Saharan Africa",
+        "Caribbean small states",
+        "Euro area",
+        "European Union",
+    }
+
+    income_groups = {
+        "High income",
+        "Upper middle income",
+        "Lower middle income",
+        "Low income",
+    }
+
+    demographic_groups = {
+        "Early-demographic dividend",
+        "Late-demographic dividend",
+        "Pre-demographic dividend",
+        "Post-demographic dividend",
+    }
+
+    def classify_group(name: str) -> str:
+        if name in geographic_regions:
+            return "geographic"
+        if name in income_groups:
+            return "income_group"
+        if name in demographic_groups:
+            return "demographic_group"
+        return "other"
+
+    df["group_type"] = df["region_name"].apply(classify_group)
+
     return df
-
-
-def dataframe_to_objects(df):
-    """
-    Convert the cleaned GDP DataFrame into a list of GDPRegion objects.
-    """
-    regions = []
-    for _, row in df.iterrows():
-        regions.append(
-            GDPRegion(
-                region_code=row["region_code"],
-                region_name=row["region_name"],
-                year=row["year"],
-                gdp_per_capita=row["gdp_per_capita"]
-            )
-        )
-    return regions
