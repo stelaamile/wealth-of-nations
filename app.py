@@ -42,12 +42,26 @@ def main():
     # ----------------------------
     st.subheader("Data preview")
     st.write("Select which group type you want to preview:")
+    
+    # Mapping from internal labels to pretty labels
+    pretty_labels = {
+        "geographic": "Geographic",
+        "income_group": "Income Group",
+        "demographic_group": "Demographic Group",
+        "other": "Other"
+    }
 
-    preview_type = st.selectbox(
+    # Reverse mapping for selection
+    inv_map = {v: k for k, v in pretty_labels.items()}
+
+    preview_label = st.selectbox(
         "Group type:",
-        ["geographic", "income_group", "demographic_group", "other"],
+        list(pretty_labels.values()),  # pretty names
         index=0,
     )
+
+    preview_type = inv_map[preview_label]  # convert pretty → internal
+
 
     # Filter once by selected group_type
     filtered_df = df[df["group_type"] == preview_type]
