@@ -41,7 +41,6 @@ def main():
     # DATA PREVIEW SECTION
     # ----------------------------
     st.subheader("Data preview")
-
     st.write("Select which group type you want to preview:")
 
     preview_type = st.selectbox(
@@ -50,54 +49,80 @@ def main():
         index=0,
     )
 
+    # Filter once by selected group_type
+    filtered_df = df[df["group_type"] == preview_type]
+
+    # Table: drop group_type column (redundant)
     preview_df = (
-        df[df["group_type"] == preview_type]
-        .loc[:, ["region_code", "region_name", "year", "gdp_per_capita", "group_type"]]
+        filtered_df.loc[:, ["region_code", "region_name", "year", "gdp_per_capita"]]
         .reset_index(drop=True)
     )
 
     st.dataframe(preview_df.head(50), use_container_width=True)
 
     st.caption(
-        f"Showing {min(50, len(preview_df)):,} of {len(preview_df):,} rows "
+        f"Showing {min(50, len(filtered_df)):,} of {len(filtered_df):,} rows "
         f"for group type: **{preview_type}**"
     )
 
     # ----------------------------
-    # GLOBAL OVERVIEW SECTION
+    # GLOBAL OVERVIEW (ALL DATA)
     # ----------------------------
     st.header("🌐 Global Prosperity Overview")
 
-    # Compute summary stats
-    summary = summarize_global_trend(df)
+    summary_global = summarize_global_trend(df)
 
     col1, col2, col3 = st.columns(3)
 
     col1.metric(
-        label=f"GDP per capita in {summary['first_year']}",
-        value=f"${summary['first_value']:,.0f}",
+        label=f"GDP per capita in {summary_global['first_year']}",
+        value=f"${summary_global['first_value']:,.0f}",
     )
 
     col2.metric(
-        label=f"GDP per capita in {summary['last_year']}",
-        value=f"${summary['last_value']:,.0f}",
+        label=f"GDP per capita in {summary_global['last_year']}",
+        value=f"${summary_global['last_value']:,.0f}",
     )
 
     col3.metric(
         label="Growth since 1960",
-        value=f"{summary['growth_pct']:.1f}%",
+        value=f"{summary_global['growth_pct']:.1f}%",
     )
 
-    # Line plot — global average over time
     st.subheader("Global Average GDP per Capita Over Time")
 
-    yearly_avg = compute_global_yearly_average(df)
+    yearly_avg_global = compute_global_yearly_average(df)
+    st.line_chart(yearly_avg_global, height=350)
 
-    st.line_chart(
-        yearly_avg,
-        height=350
-    )
+    # ----------------------------
+    # OVERVIEW FOR SELECTED GROUP TYPE
+    # ----------------------------
+    nice_name = preview_type.replace("_", " ").title()
+    st.header(f"📊 Prosperity Overview – {nice_name}")
 
+    if filtered_df.empty:
+        st.info("No data available for this group type.")
+    else:
+        summary_group = summarize_global_trend(filtered_df)
+
+        c1, c2, c3 = st.columns(3)
+        c1.metric(
+            label=f"GDP per capita in {summary_group['first_year']}",
+            value=f"${summary_group['first_value']:,.0f}",
+        )
+        c2.metric(
+            label=f"GDP per capita in {summary_group['last_year']}",
+            value=f"${summary_group['last_value']:,.0f}",
+        )
+        c3.metric(
+            label=f"Growth since {summary_group['first_year']}",
+            value=f"{summary_group['growth_pct']:.1f}%",
+        )
+
+        st.subheader(f"{nice_name}: Average GDP per Capita Over Time")
+
+        yearly_avg_group = compute_global_yearly_average(filtered_df)
+        st.line_chart(yearly_avg_group, height=350)
 
 if __name__ == "__main__":
     main()
