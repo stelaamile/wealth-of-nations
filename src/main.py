@@ -1,7 +1,8 @@
 from src.load_wb_data import load_gdp_per_capita_from_csv
 from src.demo_data import load_demo_data, analyze_demo_data, print_countries
 from src.analysis import analyze_worldbank_data
-import matplotlib.pyplot as plt
+from src.visualization import plot_global_gdp_trend
+
 
 def show_worldbank_preview():
     """
@@ -26,29 +27,6 @@ def show_worldbank_preview():
     # New: create and save a plot
     plot_global_gdp_trend(df)
 
-def plot_global_gdp_trend(df):
-    """
-    Plot the global average GDP per capita over time
-    and save the figure to the 'data/' directory.
-
-    Args:
-        df (pd.DataFrame): Cleaned GDP per capita DataFrame.
-    """
-
-    # Compute global average per year
-    yearly_avg = df.groupby("year")["gdp_per_capita"].mean()
-
-    plt.figure(figsize=(8, 4))
-    plt.plot(yearly_avg.index, yearly_avg.values)
-    plt.title("Global Average GDP per Capita Over Time")
-    plt.xlabel("Year")
-    plt.ylabel("GDP per capita (USD)")
-    plt.tight_layout()
-
-    # Save the figure to a file
-    output_path = "data/global_gdp_trend.png"
-    plt.savefig(output_path)
-    print(f"\nSaved plot to {output_path}")
 
 def main():
     """
