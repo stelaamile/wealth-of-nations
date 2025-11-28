@@ -27,6 +27,25 @@ def show_worldbank_preview():
     # New: create and save a plot
     plot_global_gdp_trend(df)
 
+from src.models import GDPRegion
+
+def show_worldbank_preview():
+    ...
+    sample_rows = df.head(5)
+
+    regions = [
+        GDPRegion(
+            region_code=row["region_code"],
+            region_name=row["region_name"],
+            year=int(row["year"]),
+            gdp_per_capita=float(row["gdp_per_capita"]),
+        )
+        for _, row in sample_rows.iterrows()
+    ]
+
+    print("\n=== Example GDPRegion objects ===")
+    for r in regions:
+        print(r, "| high income:", r.is_high_income())
 
 def main():
     """

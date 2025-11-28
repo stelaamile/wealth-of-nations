@@ -1,4 +1,5 @@
 import pandas as pd
+from src.grouping import GroupClassifier
 
 
 def load_gdp_per_capita_from_csv(filepath):
@@ -38,46 +39,16 @@ def load_gdp_per_capita_from_csv(filepath):
     df["gdp_per_capita"] = pd.to_numeric(df["gdp_per_capita"], errors="coerce")
     df = df.dropna(subset=["gdp_per_capita"])
 
-    # 6. Classify each REF_AREA_LABEL into a group type
-    geographic_regions = {
-        "Africa Eastern and Southern",
-        "Africa Western and Central",
-        "East Asia & Pacific",
-        "East Asia & Pacific (excluding high income)",
-        "Europe & Central Asia",
-        "Latin America & Caribbean",
-        "Middle East & North Africa",
-        "North America",
-        "South Asia",
-        "Sub-Saharan Africa",
-        "Caribbean small states",
-        "Euro area",
-        "European Union",
-    }
+    # 6. Classify each REF_AREA_LABEL into a group type using the classifier
+    classifier = GroupClassifier()
+    df["group_type"] = df["region_name"].apply(classifier.classify)
 
-    income_groups = {
-        "High income",
-        "Upper middle income",
-        "Lower middle income",
-        "Low income",
-    }
+    # 7. Keep only country-level observations.
+    #    These are the entries that are NOT in our geographic/income/demographic sets,
+    #    so the classifier labels them as "other".
+    df = df[df["group_type"] == "other"].copy()
 
-    demographic_groups = {
-        "Early-demographic dividend",
-        "Late-demographic dividend",
-        "Pre-demographic dividend",
-        "Post-demographic dividend",
-    }
-
-    def classify_group(name: str) -> str:
-        if name in geographic_regions:
-            return "geographic"
-        if name in income_groups:
-            return "income_group"
-        if name in demographic_groups:
-            return "demographic_group"
-        return "other"
-
-    df["group_type"] = df["region_name"].apply(classify_group)
+    # 8. For clarity, rename group_type from "other" to "country"
+    df["group_type"] = "country"
 
     return df

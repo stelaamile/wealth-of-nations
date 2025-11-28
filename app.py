@@ -10,7 +10,6 @@ from src.analysis import (
 )
 
 
-@st.cache_data
 def load_worldbank_data() -> pd.DataFrame:
     """
     Load and cache the World Bank GDP per capita dataset.
@@ -19,6 +18,9 @@ def load_worldbank_data() -> pd.DataFrame:
     df = load_gdp_per_capita_from_csv(filepath)
     return df
 
+    # Load data
+    df = load_worldbank_data()
+    st.write("DEBUG – number of rows in df:", len(df))
 
 def main():
     """Streamlit entry point for the Global Prosperity Explorer."""
@@ -41,30 +43,16 @@ def main():
     # DATA PREVIEW SECTION
     # ----------------------------
     st.subheader("Data preview")
-    st.write("Select which group type you want to preview:")
 
-    # Mapping from internal labels to pretty labels
-    pretty_labels = {
-        "geographic": "Geographic",
-        "income_group": "Income Group",
-        "demographic_group": "Demographic Group",
-        "other": "Other",
-    }
+    # We now work only with country-level data
+    preview_label = "Countries"
+    preview_type = "country"
 
-    # Reverse mapping for selection
-    inv_map = {v: k for k, v in pretty_labels.items()}
+    st.write(f"Showing data for: **{preview_label}**")
 
-    preview_label = st.selectbox(
-        "Group type:",
-        list(pretty_labels.values()),  # pretty names
-        index=0,
-    )
-
-    # Convert pretty label back to internal code
-    preview_type = inv_map[preview_label]
-
-    # Filter once by selected group_type
+    # Filter once by group_type (redundant but explicit)
     filtered_df = df[df["group_type"] == preview_type]
+
 
     # Table: drop group_type column (redundant)
     preview_df = (
@@ -79,38 +67,38 @@ def main():
         f"for group type: **{preview_label}**"
     )
 
+     # ----------------------------
+    # FOCUS ON SINGLE COUNTRY
     # ----------------------------
-    # FOCUS ON SINGLE REGION / GROUP
-    # ----------------------------
-    st.subheader("Focus on a single region / group")
+    st.subheader("Focus on a single country")
 
     if filtered_df.empty:
-        st.info("No data available for this group type.")
+        st.info("No data available.")
     else:
-        # 👉 ALL regions in this category
-        region_options = sorted(filtered_df["region_name"].unique())
+        # 👉 ALL countries available
+        country_options = sorted(filtered_df["region_name"].unique())
 
-        selected_region = st.selectbox(
-            "Select a region / group to analyze:",
-            region_options,
+        selected_country = st.selectbox(
+            "Select a country to analyze:",
+            country_options,
         )
 
-        # Show all rows for this region (no .head(50) here!)
-        region_detail = (
-            filtered_df[filtered_df["region_name"] == selected_region]
+        # Show all rows for this country (no .head(50) here!)
+        country_detail = (
+            filtered_df[filtered_df["region_name"] == selected_country]
             .loc[:, ["year", "gdp_per_capita"]]
             .sort_values("year")
             .reset_index(drop=True)
         )
 
-        st.write(f"GDP per capita over time – **{selected_region}**")
-        st.dataframe(region_detail, use_container_width=True)
+        st.write(f"GDP per capita over time – **{selected_country}**")
+        st.dataframe(country_detail, use_container_width=True)
 
-        # Optional: region vs world chart synced with selection
-        region_vs_world = compute_region_vs_world(df, selected_region)
-        region_vs_world = region_vs_world.set_index("year")
-        st.subheader(f"{selected_region} vs World – GDP per capita")
-        st.line_chart(region_vs_world, height=350)
+        # Country vs world chart synced with selection
+        country_vs_world = compute_region_vs_world(df, selected_country)
+        country_vs_world = country_vs_world.set_index("year")
+        st.subheader(f"{selected_country} vs World – GDP per Capita")
+        st.line_chart(country_vs_world, height=350)
 
     # ----------------------------
     # GLOBAL OVERVIEW (ALL DATA)
