@@ -1,11 +1,20 @@
 class GroupClassifier:
     """
-    A small helper class that knows how to classify a region_name
-    into a group_type (geographic, income_group, demographic_group, other).
+    Classify a region_name into one of several categories used in the project.
+
+    Categories:
+        - 'geographic'
+        - 'income_group'
+        - 'demographic_group'
+        - 'other' (used for individual countries)
+
+    In the main data-loading step (load_wb_data.py), we keep only entries
+    classified as 'other', which correspond to country-level observations.
+    These are later relabeled as 'country'.
     """
 
     def __init__(self):
-        # sets of known names for each group
+        # Predefined group sets
         self.geographic_regions = {
             "Africa Eastern and Southern",
             "Africa Western and Central",
@@ -36,15 +45,12 @@ class GroupClassifier:
             "Post-demographic dividend",
         }
 
-    def classify(self, name):
-        """
-        Return the group type for a given region_name
-        as a simple string.
-        """
+    def classify(self, name: str) -> str:
+        """Return the group type based on the region name."""
         if name in self.geographic_regions:
             return "geographic"
         if name in self.income_groups:
             return "income_group"
         if name in self.demographic_groups:
             return "demographic_group"
-        return "other"
+        return "other"  # this becomes 'country' after filtering

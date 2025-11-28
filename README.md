@@ -1,113 +1,144 @@
-This project analyzes GDP per capita for a selected set of countries using data from the World Bank.
-It demonstrates key skills from the course:
+🌍 The Wealth of Nations
 
-clean project structure
+A Modular Python Application for Analyzing Global Prosperity
 
-modular code
+This project analyzes GDP per capita across countries over time using data from the World Bank.
+It demonstrates a complete Python data-processing workflow, including:
 
-data loading from external sources
+- Pure Python CSV handling
+- Pandas and NumPy data analysis
+- Object-Oriented Programming
+- Matplotlib visualisations
+- Clean modular architecture
+- Streamlit dashboard (optional bonus)
 
-data cleaning and manipulation with pandas
+The main question explored is:
 
-scientific computing with NumPy
-
-visualisation with matplotlib
-
-reproducible environments with virtual environments
-
-The project loads a local World Bank dataset (worldbank_gdp_per_capita.csv), cleans it, and computes summary statistics. It also includes a small demo dataset (demo_countries.csv) loaded using basic Python to illustrate manual CSV handling.
+How has global prosperity evolved across countries from 1960 to today?
 
 Project Structure
-project_root/
+
+wealth-of-nations/
 ├── data/
 │   ├── demo_countries.csv
 │   ├── worldbank_gdp_per_capita.csv
-│   └── global_gdp_trend.png        # generated plot
+│   └── global_gdp_trend.png
 │
 ├── src/
-│   ├── __init__.py
+│   ├── analysis.py
+│   ├── demo_data.py
+│   ├── grouping.py
 │   ├── load_wb_data.py
-│   └── main.py
+│   ├── main.py
+│   ├── models.py
+│   └── visualization.py
 │
-├── venv/
-│
-├── .gitignore
+├── app.py
 ├── requirements.txt
 └── README.md
 
-Data Sources
+Features
+1. Pure Python data analysis (demo_data.py)
 
-World Bank — GDP per capita (current US$)
-Local file: data/worldbank_gdp_per_capita.csv
-The file includes metadata columns, which are cleaned automatically by load_wb_data.py.
+A small dataset is parsed without pandas:
+- Manual CSV reading using .readlines()
+- Dictionaries and loops
+- Average GDP per capita
+- Highest life expectancy
+- Countries above average GDP
 
-Demo countries dataset
-Local file: data/demo_countries.csv
-Used to demonstrate basic Python CSV parsing (no pandas).
+2. World Bank data loader (load_wb_data.py)
 
-Installation
+Cleans the SDMX CSV and extracts:
+- region_code
+- region_name
+- year
+- gdp_per_capita
 
-Clone the repository:
+It also uses a custom OOP classifier to remove aggregate regions and keep only real countries.
 
-git clone https://github.com/<your-username>/<your-repo>.git
-cd <your-repo>
+3. Region classification with OOP (grouping.py)
 
+Contains the GroupClassifier class that assigns:
+- geographic regions
+- income groups
+- demographic groups
+- other (countries)
 
-Create and activate the virtual environment:
+Used by the loader for clean modular design.
 
-python3 -m venv venv
+4. GDPRegion class (models.py)
+
+Represents a single country-year observation with attributes and a method:
+- is_high_income()
+
+Demonstrated in main.py.
+
+5. Analytical functions (analysis.py)
+
+Includes:
+- Global yearly average GDP
+- Growth summary
+- Country vs world comparison
+- Richest–poorest country gap
+
+6. Visualization (visualization.py)
+
+Creates and saves:
+
+- global_gdp_trend.png
+
+7. Main script (src/main.py)
+
+Runs the full pipeline:
+- Pure Python demo analysis
+- World Bank loading + cleaning
+- Stats and trends
+- Saving plots
+- OOP demonstration with GDPRegion objects
+
+8. Streamlit dashboard (app.py)
+
+Interactive interface featuring:
+- Country selector
+- Country vs world trends
+- Global overview metrics
+- Line charts
+
+(Counts for extra credit.)
+
+Installation:
+git clone <your-repo-url>
+cd wealth-of-nations
+python -m venv venv
 source venv/bin/activate
-
-
-Install dependencies:
-
 pip install -r requirements.txt
 
-Running the Project
-
-Run the main script:
-
+How to Run:
+1. Run the full analysis (CLI)
 python -m src.main
 
+2. Run the dashboard (optional)
+streamlit run app.py
 
-This will:
+Data Source:
 
-load and display the demo dataset
+World Bank — GDP per capita (current US$), SDMX format.
+Cleaned inside load_wb_data.py.
 
-compute simple statistics using pure Python
+Skills Demonstrated:
 
-load and clean the World Bank GDP dataset using pandas
+- Python fundamentals
+- Data structures
+- File I/O
+- Object-Oriented Programming
+- pandas & NumPy
+- Data visualization
+- Modular architecture
+- Streamlit (interactive UI)
 
-compute global numerical statistics using NumPy
+Author:
 
-display the top 5 richest regions in the latest year
-
-generate a plot of the global average GDP per capita over time and save it as:
-
-data/global_gdp_trend.png
-
-Dependencies
-
-Listed in requirements.txt:
-
-pandas
-numpy
-matplotlib
-
-Git Usage
-
-This project follows recommended Git practices:
-
-.gitignore excludes unnecessary files such as venv/, __pycache__/, and .DS_Store
-
-commits are small, frequent, and have descriptive messages
-
-README provides clear installation and usage instructions
-
-Example commit messages:
-
-feat: add World Bank GDP loader
-feat: integrate GDP statistics and analysis
-feat: add global GDP trend plot using matplotlib
-fix: clean metadata row from World Bank dataset
-docs: update README with project usage and plot description
+Stela Mile
+MSc Data Science for Economics & Health
+Università degli Studi di Milano
