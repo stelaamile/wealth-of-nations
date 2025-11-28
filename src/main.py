@@ -2,7 +2,7 @@ from src.load_wb_data import load_gdp_per_capita_from_csv
 from src.demo_data import load_demo_data, analyze_demo_data, print_countries
 from src.analysis import analyze_worldbank_data
 from src.visualization import plot_global_gdp_trend
-
+from src.models import GDPRegion
 
 def show_worldbank_preview():
     """
@@ -27,10 +27,31 @@ def show_worldbank_preview():
     # New: create and save a plot
     plot_global_gdp_trend(df)
 
-from src.models import GDPRegion
 
 def show_worldbank_preview():
-    ...
+    """
+    Load the World Bank GDP per capita dataset using pandas
+    and print a clean preview, including:
+    - first five rows
+    - number of rows
+    - column names
+    """
+
+    filepath = "data/worldbank_gdp_per_capita.csv"
+    df = load_gdp_per_capita_from_csv(filepath)
+
+    print("\n=== WORLD BANK GDP PER CAPITA: PREVIEW ===")
+    print(df.head())
+    print(f"\nNumber of rows: {len(df)}")
+    print(f"Columns: {list(df.columns)}")
+
+    # Run a simple pandas + numpy analysis
+    analyze_worldbank_data(df)
+
+    # Create and save a plot
+    plot_global_gdp_trend(df)
+
+    # --- OOP demo: build a few GDPRegion objects ---
     sample_rows = df.head(5)
 
     regions = [
