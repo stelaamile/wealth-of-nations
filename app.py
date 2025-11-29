@@ -1,7 +1,10 @@
 import streamlit as st
 import pandas as pd
 
-from src.load_wb_data import load_gdp_per_capita_from_csv
+# CRITICAL: Import the unified loader (load_gdp_data)
+# Note: You can remove the unused import 'load_gdp_per_capita_from_csv'
+from src.load_wb_data import load_gdp_data 
+
 from src.analysis import (
     compute_global_yearly_average,
     summarize_global_trend,
@@ -10,17 +13,22 @@ from src.analysis import (
 )
 
 
+@st.cache_data # <-- FIX 1: Add the caching decorator
 def load_worldbank_data() -> pd.DataFrame:
     """
-    Load and cache the World Bank GDP per capita dataset.
+    Load and cache the World Bank GDP per capita dataset, 
+    using the API loader which includes the country-level filter.
     """
-    filepath = "data/worldbank_gdp_per_capita.csv"
-    df = load_gdp_per_capita_from_csv(filepath)
+    # FIX 2: Use the unified load_gdp_data function
+    # It attempts API first, then falls back to CSV, and includes the country filter.
+    df = load_gdp_data(use_api=True) 
+    
+    # Handle failure (Streamlit best practice)
+    if df is None:
+        st.error("Could not load data from API or local file. Check console for details.")
+        return pd.DataFrame()
+        
     return df
-
-    # Load data
-    df = load_worldbank_data()
-    st.write("DEBUG – number of rows in df:", len(df))
 
 def main():
     """Streamlit entry point for the Global Prosperity Explorer."""
