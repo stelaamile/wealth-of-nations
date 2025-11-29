@@ -12,3 +12,8 @@ venv/
 
 # macOS system files
 .DS_Store
+
+
+# Ignore the World Bank CSV since we use the API now, 
+# but keep the local file for fallback/testing.
+data/worldbank_gdp_per_capita.csv

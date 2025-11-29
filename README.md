@@ -47,15 +47,9 @@ A small dataset is parsed without pandas:
 - Highest life expectancy
 - Countries above average GDP
 
-2. World Bank data loader (load_wb_data.py)
+2. World Bank Data Loader (load_wb_data.py)
 
-Cleans the SDMX CSV and extracts:
-- region_code
-- region_name
-- year
-- gdp_per_capita
-
-It also uses a custom OOP classifier to remove aggregate regions and keep only real countries.
+Uses the **requests** library to fetch data from the World Bank API for 2000-2020 (with CSV fallback). The data is cleaned and filtered to **remove aggregate regions** (e.g., 'World', 'High Income') using the GroupClassifier, ensuring only country-level data remains.
 
 3. Region classification with OOP (grouping.py)
 
@@ -97,15 +91,7 @@ Runs the full pipeline:
 - Saving plots
 - OOP demonstration with GDPRegion objects
 
-8. Streamlit dashboard (app.py)
-
-Interactive interface featuring:
-- Country selector
-- Country vs world trends
-- Global overview metrics
-- Line charts
-
-(Counts for extra credit.)
+8. Streamlit Dashboard (app.py) An interactive interface featuring caching (using **@st.cache_data**) for fast performance, live metrics, country selector, and trends.
 
 Installation:
 git clone <your-repo-url>
@@ -123,8 +109,7 @@ streamlit run app.py
 
 Data Source:
 
-World Bank — GDP per capita (current US$), SDMX format.
-Cleaned inside load_wb_data.py.
+World Bank — GDP per capita (current US$), fetched via **API** (requests) from 2000-2020. Local CSV data is used as a fallback. Data is cleaned and filtered inside load_wb_data.py.
 
 Skills Demonstrated:
 
