@@ -10,37 +10,35 @@ It demonstrates a complete Python data-processing workflow, including:
 - Object-Oriented Programming
 - Matplotlib visualisations
 - Clean modular architecture
-- Streamlit dashboard (optional bonus)
+- Streamlit dashboard
 
 The main question explored is:
 
-How has global prosperity evolved across countries from 1960 to today?
+How has global prosperity evolved across countries from 2000 to 2020?
 
 Project Structure
 
 wealth-of-nations/
 ├── data/
 │   ├── demo_countries.csv
-│   ├── worldbank_gdp_per_capita.csv
-│   └── global_gdp_trend.png
+│   └── global_gdp_trend.png    <-- Visualization Output
 │
-├── src/
-│   ├── analysis.py
-│   ├── demo_data.py
-│   ├── grouping.py
-│   ├── load_wb_data.py
-│   ├── main.py
-│   ├── models.py
-│   └── visualization.py
+├── src/                        <-- Source Code
+│   ├── analysis.py             # Statistical analysis (NumPy, Pandas)
+│   ├── grouping.py             # Region classification logic
+│   ├── load_wb_data.py         # API/CSV loading and critical filtering
+│   ├── models.py               # GDPRegion Class (OOP) 
+│   └── visualization.py        # Matplotlib plotting logic 
 │
-├── app.py
-├── requirements.txt
+├── app.py                      # Streamlit Dashboard 
+├── requirements.txt             
 └── README.md
 
 Features
 1. Pure Python data analysis (demo_data.py)
 
-A small dataset is parsed without pandas:
+A small dataset is processed without pandas:
+
 - Manual CSV reading using .readlines()
 - Dictionaries and loops
 - Average GDP per capita
@@ -49,11 +47,19 @@ A small dataset is parsed without pandas:
 
 2. World Bank Data Loader (load_wb_data.py)
 
-Uses the **requests** library to fetch data from the World Bank API for 2000-2020 (with CSV fallback). The data is cleaned and filtered to **remove aggregate regions** (e.g., 'World', 'High Income') using the GroupClassifier, ensuring only country-level data remains.
+Fetches GDP per capita (current US$) for 2000–2020 using the World Bank API, with automatic CSV fallback.
+
+Includes:
+
+- Data cleaning
+- Type conversion
+- Removal of aggregate pseudo-countries (e.g., High Income, Euro Area)
+- Integration with region classifier
 
 3. Region classification with OOP (grouping.py)
 
 Contains the GroupClassifier class that assigns:
+
 - geographic regions
 - income groups
 - demographic groups
@@ -63,14 +69,17 @@ Used by the loader for clean modular design.
 
 4. GDPRegion class (models.py)
 
-Represents a single country-year observation with attributes and a method:
-- is_high_income()
+Represents a single country–year observation with:
 
-Demonstrated in main.py.
+- Attributes (country, year, GDP)
+- Utility methods (e.g., is_high_income())
+
+Used in the main script to demonstrate OOP concepts.
 
 5. Analytical functions (analysis.py)
 
 Includes:
+
 - Global yearly average GDP
 - Growth summary
 - Country vs world comparison
@@ -85,15 +94,25 @@ Creates and saves:
 7. Main script (src/main.py)
 
 Runs the full pipeline:
+
 - Pure Python demo analysis
-- World Bank loading + cleaning
-- Stats and trends
+- World Bank loading
+- Cleaning, filtering and classification
+- Statistical computations
 - Saving plots
 - OOP demonstration with GDPRegion objects
 
-8. Streamlit Dashboard (app.py) An interactive interface featuring caching (using **@st.cache_data**) for fast performance, live metrics, country selector, and trends.
+8. Interactive Dashboard (app.py)
+
+A Streamlit web app featuring:
+
+- Caching (@st.cache_data)
+- Country selector
+- Trend visualisations
+- Summary metrics
 
 Installation:
+
 git clone <your-repo-url>
 cd wealth-of-nations
 python -m venv venv
@@ -109,7 +128,10 @@ streamlit run app.py
 
 Data Source:
 
-World Bank — GDP per capita (current US$), fetched via **API** (requests) from 2000-2020. Local CSV data is used as a fallback. Data is cleaned and filtered inside load_wb_data.py.
+World Bank — GDP per capita (current US$)
+Data fetched via API using requests (2000–2020).
+A local CSV is used as a fallback when API calls fail.
+All cleaning, filtering and region assignments are handled internally.
 
 Skills Demonstrated:
 
@@ -124,7 +146,7 @@ Skills Demonstrated:
 
 
 Methodology Notes:
-Generative AI was utilized for compiling comprehensive, non-country aggregate lists for the GroupClassifier and for refining docstrings/comments."
+The project incorporated AI-augmented coding practices using ChatGPT as a pair-programming assistant. AI support was used to prototype functions, refactor code for modularity, streamline the Streamlit interface, and validate the mathematical consistency of the analyses. The workflow followed a human-in-the-loop approach: AI provided suggestions, which were then critically assessed, adapted, and manually implemented. This enhanced productivity while ensuring that the analytical logic and final implementations remained fully human-validated.
 
 Author:
 
