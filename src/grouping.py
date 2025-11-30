@@ -1,21 +1,18 @@
 class GroupClassifier:
     """
     Classify a region_name into one of several categories used in the project.
-
-    Categories:
-        - 'geographic'
-        - 'income_group'
-        - 'demographic_group'
-        - 'other' (used for individual countries)
-
-    In the main data-loading step (load_wb_data.py), we keep only entries
-    classified as 'other', which correspond to country-level observations.
-    These are later relabeled as 'country'.
+    ...
     """
 
     def __init__(self):
         # Predefined group sets
         self.geographic_regions = {
+            # --- CRITICAL ADDITIONS ---
+            "Arab World", # MISSING AGGREGATE
+            "World", # MISSING AGGREGATE
+            "Least Developed Countries", # MISSING AGGREGATE
+            "Fragile and conflict affected situations", # MISSING AGGREGATE
+            # --- END CRITICAL ADDITIONS ---
             "Africa Eastern and Southern",
             "Africa Western and Central",
             "East Asia & Pacific",
@@ -36,6 +33,10 @@ class GroupClassifier:
             "Upper middle income",
             "Lower middle income",
             "Low income",
+            # --- CRITICAL ADDITIONS ---
+            "IDA countries", # MISSING AGGREGATE (International Development Association)
+            "IBRD countries", # MISSING AGGREGATE (International Bank for Reconstruction and Development)
+            # --- END CRITICAL ADDITIONS ---
         }
 
         self.demographic_groups = {

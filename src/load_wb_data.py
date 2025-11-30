@@ -1,15 +1,15 @@
 import requests
 import pandas as pd
 from typing import Optional
-from src.grouping import GroupClassifier
+from src.grouping import GroupClassifier # CRITICAL: This is used for filtering
 
 
 # --- CONSTANT ---
 GDP_INDICATOR = "NY.GDP.PCAP.CD"
 
 
-# --- 1. CSV LOADING (Kept from your original file for fallback) ---
-def load_gdp_per_capita_from_csv(filepath):
+# --- 1. CSV LOADING (Kept for robust fallback) ---
+def load_gdp_per_capita_from_csv(filepath: str) -> pd.DataFrame:
     """
     Load GDP per capita data from the World Bank SDMX-style CSV.
     """
@@ -30,7 +30,7 @@ def load_gdp_per_capita_from_csv(filepath):
         }
     )
 
-    # 4. Convert year to integer
+    # 4. Convert year to integer and handle errors/NaT
     df["year"] = pd.to_numeric(df["year"], errors="coerce")
     df = df.dropna(subset=["year"])
     df["year"] = df["year"].astype(int)
@@ -39,10 +39,10 @@ def load_gdp_per_capita_from_csv(filepath):
     df["gdp_per_capita"] = pd.to_numeric(df["gdp_per_capita"], errors="coerce")
     df = df.dropna(subset=["gdp_per_capita"])
 
-    return df[["region_code", "region_name", "year", "gdp_per_capita"]]
+    return df[["region_code", "region_name", "year", "gdp_per_capita"]].copy() # Added .copy()
 
 
-# --- 2. API FETCHING (Your new function using requests) ---
+# --- 2. API FETCHING (Uses requests - C3) ---
 def fetch_gdp_per_capita_from_api(
     start_year: int, 
     end_year: int,
@@ -52,7 +52,6 @@ def fetch_gdp_per_capita_from_api(
     Fetch GDP per capita data (NY.GDP.PCAP.CD) from the World Bank API
     for all regions over a specified time range.
     """
-    # 1. Construct the API URL
     url = (
         f"http://api.worldbank.org/v2/country/all/indicator/{indicator}"
         f"?date={start_year}:{end_year}&format=json&per_page=10000"
@@ -68,7 +67,7 @@ def fetch_gdp_per_capita_from_api(
         print(f"Error fetching data from World Bank API: {e}")
         return None
 
-    # 3. Process the JSON response
+    # 3. Process the JSON response (skip metadata)
     data = response.json()
     if len(data) < 2 or data[1] is None:
         print("API returned no data or an unexpected format.")
@@ -76,7 +75,7 @@ def fetch_gdp_per_capita_from_api(
 
     records = data[1]
 
-    # 4. Flatten the JSON structure for the DataFrame
+    # 4. Flatten the JSON structure and process records
     processed_records = []
     for record in records:
         if record is not None and record.get("value") is not None:
@@ -87,12 +86,12 @@ def fetch_gdp_per_capita_from_api(
                 "gdp_per_capita": record["value"] 
             })
 
-    # 5. Convert to DataFrame and clean
+    # 5. Convert to DataFrame and final initial cleanup
     df = pd.DataFrame(processed_records)
     df["gdp_per_capita"] = pd.to_numeric(df["gdp_per_capita"], errors="coerce")
     df = df.dropna(subset=["gdp_per_capita"]) 
     
-    return df[['region_code', 'region_name', 'year', 'gdp_per_capita']]
+    return df[['region_code', 'region_name', 'year', 'gdp_per_capita']].copy() # Added .copy()
 
 
 # --- 3. UNIFIED LOADING & FILTERING (Final function for analysis) ---
@@ -112,14 +111,15 @@ def load_gdp_data(use_api: bool = True) -> Optional[pd.DataFrame]:
         print("Data loading failed.")
         return None
 
-    # --- CRITICAL FILTERING STEPS ---
+    # --- CRITICAL FILTERING STEPS (Uses src/grouping.py) ---
     
     # 2. Classify: Use the GroupClassifier to identify aggregates
     classifier = GroupClassifier()
     df["group_type"] = df["region_name"].apply(classifier.classify) 
 
     # 3. Filter: Keep only the individual countries (tagged as 'other' by the classifier)
-    df = df[df["group_type"] == "other"].copy()
+    # FIX: Added .copy() for safety/no-warning guarantee
+    df = df[df["group_type"] == "other"].copy() 
 
     # 4. Rename: Change the 'other' tag to 'country' for clarity
     df["group_type"] = "country"

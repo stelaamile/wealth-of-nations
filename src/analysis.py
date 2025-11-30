@@ -35,8 +35,10 @@ def analyze_worldbank_data(df: pd.DataFrame) -> None:
     top5 = latest_df.nlargest(5, "gdp_per_capita")[["region_name", "gdp_per_capita"]]
 
     print(f"\nTop 5 regions in {latest_year} by GDP per capita:")
-    for _, row in top5.iterrows():
-        print(f" - {row['region_name']}: {row['gdp_per_capita']:,.2f} USD")
+    for i in range(len(top5)):
+        region = top5.iloc[i]["region_name"]
+        gdp = top5.iloc[i]["gdp_per_capita"]
+        print(f" - {region}: {gdp:,.2f} USD")
 
 
 # ---------- New helper functions for Streamlit ----------

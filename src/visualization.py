@@ -20,14 +20,17 @@ def plot_global_gdp_trend(df: pd.DataFrame) -> None:
     # Compute global average per year
     yearly_avg = df.groupby("year")["gdp_per_capita"].mean()
 
-    plt.figure(figsize=(8, 4))
-    plt.plot(yearly_avg.index, yearly_avg.values)
-    plt.title("Global Average GDP per Capita Over Time")
-    plt.xlabel("Year")
-    plt.ylabel("GDP per capita (USD)")
+# Use Object-Oriented Interface (Creation of fig and ax)
+    fig, ax = plt.subplots(figsize=(8, 4))
+    
+    # Plotting is done on the ax object
+    ax.plot(yearly_avg.index, yearly_avg.values)
+    ax.set_title("Global Average GDP per Capita Over Time")
+    ax.set_xlabel("Year")
+    ax.set_ylabel("GDP per capita (USD)")
+    
     plt.tight_layout()
 
-    # Save the figure to a file
+    # Save the figure object
     output_path = "data/global_gdp_trend.png"
-    plt.savefig(output_path)
-    print(f"\nSaved plot to {output_path}")
+    fig.savefig(output_path) # Save the figure object (fig)

@@ -122,6 +122,10 @@ Skills Demonstrated:
 - Modular architecture
 - Streamlit (interactive UI)
 
+
+Methodology Notes:
+Generative AI was utilized for compiling comprehensive, non-country aggregate lists for the GroupClassifier and for refining docstrings/comments."
+
 Author:
 
 Stela Mile

@@ -1,72 +1,52 @@
-from src.load_wb_data import load_gdp_per_capita_from_csv
+import pandas as pd
+from src.load_wb_data import load_gdp_data # CRITICAL: Import the unified loader
 from src.demo_data import load_demo_data, analyze_demo_data, print_countries
 from src.analysis import analyze_worldbank_data
 from src.visualization import plot_global_gdp_trend
 from src.models import GDPRegion
 
-def show_worldbank_preview():
+def show_worldbank_analysis():
     """
-    Load the World Bank GDP per capita dataset using pandas
-    and print a clean preview, including:
-    - first five rows
-    - number of rows
-    - column names
+    Load the World Bank GDP per capita dataset using the unified loader
+    (API/filtering) and execute the full analysis pipeline.
     """
+    
+    # 1. Load data using the unified, filtered function (API is default)
+    df = load_gdp_data(use_api=True) # Use the correct, filtered function
 
-    filepath = "data/worldbank_gdp_per_capita.csv"
-    df = load_gdp_per_capita_from_csv(filepath)
+    if df is None or df.empty:
+        print("\nFATAL ERROR: World Bank data could not be loaded or is empty.")
+        return
 
-    print("\n=== WORLD BANK GDP PER CAPITA: PREVIEW ===")
-    print(df.head())
-    print(f"\nNumber of rows: {len(df)}")
-    print(f"Columns: {list(df.columns)}")
+    print("\n\n=== WORLD BANK DATASET LOADED ===")
+    print(f"Number of clean country-year observations: {len(df):,}")
+    print(f"Columns: {list(df.columns)}\n")
 
-    # New: run a simple pandas + numpy analysis
+    # 2. Run the main analysis (prints stats to terminal)
     analyze_worldbank_data(df)
 
-    # New: create and save a plot
+    # 3. Create and save a plot (Visualization C6)
     plot_global_gdp_trend(df)
 
-
-def show_worldbank_preview():
-    """
-    Load the World Bank GDP per capita dataset using pandas
-    and print a clean preview, including:
-    - first five rows
-    - number of rows
-    - column names
-    """
-
-    filepath = "data/worldbank_gdp_per_capita.csv"
-    df = load_gdp_per_capita_from_csv(filepath)
-
-    print("\n=== WORLD BANK GDP PER CAPITA: PREVIEW ===")
-    print(df.head())
-    print(f"\nNumber of rows: {len(df)}")
-    print(f"Columns: {list(df.columns)}")
-
-    # Run a simple pandas + numpy analysis
-    analyze_worldbank_data(df)
-
-    # Create and save a plot
-    plot_global_gdp_trend(df)
-
-    # --- OOP demo: build a few GDPRegion objects ---
-    sample_rows = df.head(5)
+    # --- 4. OOP Demo: Build and inspect GDPRegion objects ---
+    # Sample a few rows for the demonstration
+    sample_rows = df.sample(5)
 
     regions = [
         GDPRegion(
-            region_code=row["region_code"],
-            region_name=row["region_name"],
-            year=int(row["year"]),
-            gdp_per_capita=float(row["gdp_per_capita"]),
+            region_code=row.region_code,
+            region_name=row.region_name,
+            year=int(row.year),
+            gdp_per_capita=float(row.gdp_per_capita),
         )
-        for _, row in sample_rows.iterrows()
+        for row in sample_rows.itertuples(index=False)
     ]
 
-    print("\n=== Example GDPRegion objects ===")
+    print("\n=== Example GDPRegion objects (OOP Demo) ===")
     for r in regions:
-        print(r, "| high income:", r.is_high_income())
+        # Uses __repr__ and is_high_income() methods
+        print(f"{r} | high income: {r.is_high_income()}")
+
 
 def main():
     """
@@ -78,23 +58,23 @@ def main():
     - GDP trend visualisation (matplotlib)
     """
 
-    print("Welcome to 'The Wealth of Nations' project!")
+    print("Welcome to 'The Wealth of Nations' project! (CLI Mode)")
 
+    # 1. Run pure Python demo (C1)
     filepath = "data/demo_countries.csv"
     data = load_demo_data(filepath)
 
     if not data:
-        print("No data loaded. Exiting program.")
-        return
+        print("Demo data not loaded. Skipping pure Python analysis.")
+    else:
+        print("\n--- Running Pure Python Demo ---")
+        print_countries(data)
+        analyze_demo_data(data)
 
-    print("Demo data loaded successfully.")
-    print_countries(data)
-    analyze_demo_data(data)
-
-    # New: also show the World Bank dataset
-    show_worldbank_preview()
-
+    # 2. Run the World Bank analysis pipeline (C3, C4, C5, C6)
+    show_worldbank_analysis()
 
 
 if __name__ == "__main__":
-    main() 
+    main()
+    
