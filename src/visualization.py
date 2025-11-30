@@ -22,6 +22,9 @@ def plot_global_gdp_trend(df: pd.DataFrame) -> None:
 
 # Use Object-Oriented Interface (Creation of fig and ax)
     fig, ax = plt.subplots(figsize=(8, 4))
+
+    ax.set_xticks(yearly_avg.index)
+    plt.xticks(rotation=45)
     
     # Plotting is done on the ax object
     ax.plot(yearly_avg.index, yearly_avg.values)
